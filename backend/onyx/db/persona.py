@@ -1240,9 +1240,9 @@ def get_persona_by_id(
 
     # or check if user owns persona
     or_conditions = Persona.user_id == user.id
-    # allow access if persona user id is None
-    or_conditions |= Persona.user_id == None  # noqa: E711
     if not is_for_edit:
+        # allow access if persona user id is None
+        or_conditions |= Persona.user_id == None  # noqa: E711
         # if the user is in a group related to the persona
         or_conditions |= User__UserGroup.user_id == user.id
         # if the user is in the .users of the persona
