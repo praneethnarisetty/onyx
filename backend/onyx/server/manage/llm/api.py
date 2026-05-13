@@ -1720,6 +1720,8 @@ def get_openai_compatible_server_available_models(
         request.api_key, request.provider_name, request.api_base, db_session
     )
 
+    _validate_api_base_url(request.api_base, allow_internal=True)
+
     response_json = _get_openai_compatible_server_response(
         api_base=request.api_base, api_key=api_key
     )
