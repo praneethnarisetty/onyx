@@ -24,12 +24,13 @@ async def close_auth_limiter() -> None:
 
 
 async def rate_limit_key(request: Request) -> str:
-    # Uses both IP and User-Agent to make collisions less likely if IP is behind NAT.
-    # If request.client is None, a fallback is used to avoid completely unknown keys.
-    # This helps ensure we have a unique key for each 'user' in simple scenarios.
-    ip_part = request.client.host if request.client else "unknown"
-    ua_part = request.headers.get("user-agent", "none").replace(" ", "_")
-    return f"{ip_part}-{ua_part}"
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip.strip()
+    return request.client.host if request.client else "unknown"
 
 
 def get_auth_rate_limiters() -> List[Callable]:
